@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laser Plus - Loyalty Program</title>
+    <title>Laser Plus - Programa de Lealtad</title>
     <style>
         :root {
             --bg-color: #0b0e11;
@@ -38,12 +38,7 @@
             margin-bottom: 30px;
         }
 
-        .logo {
-            font-weight: 800;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-        }
-
+        .logo { font-weight: 800; font-size: 1.2rem; letter-spacing: 1px; }
         .logo span { color: var(--accent-blue); }
 
         .loyalty-card {
@@ -71,27 +66,10 @@
             margin-bottom: 5px;
         }
 
-        .points-value {
-            font-size: 3.5rem;
-            font-weight: 700;
-        }
+        .points-value { font-size: 3.5rem; font-weight: 700; }
+        .points-unit { font-size: 1.2rem; color: var(--accent-blue); font-weight: 600; }
 
-        .points-unit {
-            font-size: 1.2rem;
-            color: var(--accent-blue);
-            font-weight: 600;
-        }
-
-        .spend-info {
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            margin-bottom: 25px;
-        }
-
-        /* Barra de progreso estilo Neón */
-        .progress-wrapper {
-            margin-top: 20px;
-        }
+        .spend-info { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 25px; }
 
         .progress-bar-bg {
             background: #21262d;
@@ -106,17 +84,13 @@
             height: 100%;
             width: 0%;
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
-            transition: width 1s ease-in-out;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+            transition: width 1.5s ease-in-out;
         }
 
-        .motivation-text {
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            line-height: 1.4;
-        }
+        .motivation-text { font-size: 0.85rem; color: var(--text-dim); line-height: 1.4; }
 
-        .btn-generate {
+        .btn-redeem {
             background: var(--accent-blue);
             color: #000;
             border: none;
@@ -124,15 +98,12 @@
             padding: 16px;
             border-radius: 14px;
             font-weight: 700;
-            font-size: 0.9rem;
             margin-top: 30px;
             cursor: pointer;
-            transition: transform 0.2s, opacity 0.2s;
-            display: none; /* Se activa con JS */
+            display: none; /* Solo aparece si llega a 50 pts */
         }
 
-        .btn-generate:active { transform: scale(0.98); }
-
+        /* Estilo de los 3 cuadritos de colores */
         .decoration {
             position: absolute;
             bottom: 20px;
@@ -141,7 +112,11 @@
             gap: 4px;
         }
 
-        .dot { width: 8px; height: 8px; border-radius: 2px; }
+        .dot { 
+            width: 12px; 
+            height: 7px; 
+            border-radius: 1px; 
+        }
     </style>
 </head>
 <body>
@@ -149,39 +124,38 @@
 <div class="container">
     <div class="header">
         <div class="logo">LASER <span>PLUS</span></div>
-        <div style="font-size: 0.8rem; opacity: 0.7;">Loyalty Program</div>
+        <div style="font-size: 0.8rem; opacity: 0.7;">Puntos de Lealtad</div>
     </div>
 
     <div class="loyalty-card">
-        <div id="greeting" class="label" style="color: var(--accent-blue); margin-bottom: 20px;">HOLA...</div>
+        <div id="greeting" class="label" style="color: var(--accent-blue); margin-bottom: 20px;">Cargando...</div>
         
         <div class="label">Mis Puntos</div>
         <div class="points-display">
             <div id="points-val" class="points-value">0</div>
             <div class="points-unit">PTS</div>
         </div>
-        <div id="spend-val" class="spend-info">Gasto: $0.00 MXN</div>
+        <div id="spend-val" class="spend-info">Gasto: $0 MXN</div>
 
-        <div class="progress-wrapper">
-            <div class="progress-bar-bg">
-                <div id="progress-fill" class="progress-fill"></div>
-            </div>
-            <div id="motivation" class="motivation-text">Cargando datos de tu última visita...</div>
+        <div class="progress-bar-bg">
+            <div id="progress-fill" class="progress-fill"></div>
         </div>
+        <div id="motivation" class="motivation-text">Consultando tu historial en Odoo...</div>
 
-        <button id="btn-redeem" class="btn-generate" onclick="handleRedeem()">GENERAR QR DE CANJE</button>
+        <button id="btn-redeem" class="btn-redeem" onclick="handleRedeem()">CANJEAR PREMIO</button>
 
         <div class="decoration">
-            <div class="dot" style="background: #E91E63;"></div>
-            <div class="dot" style="background: #FFC107;"></div>
-            <div class="dot" style="background: #00D2FF;"></div>
-        </div>
+            <div class="dot" style="background: #FFD600;"></div> <div class="dot" style="background: #FF007A;"></div> <div class="dot" style="background: #00D2FF;"></div> </div>
     </div>
 </div>
 
 <script>
-    const MIN_POINTS = 50;
-    const PERCENTAGE = 0.05;
+    // CONFIGURACIÓN INICIAL
+    const MIN_POINTS = 50; 
+    const PERCENTAGE = 0.05; // 5% de lealtad
+    
+    // --- PEGA AQUÍ TU LINK DE CLOUDFLARE ---
+    const workerUrl = "https://laser-plus-api.burnsvibb-1.workers.dev/"; 
 
     async function init() {
         const params = new URLSearchParams(window.location.search);
@@ -191,16 +165,27 @@
         document.getElementById('greeting').innerText = `HOLA, ${name.toUpperCase()}`;
 
         if (phone) {
-            // Simulando respuesta de Odoo
-            // En producción aquí haces el fetch real
-            const mockSpend = 850; // Ejemplo: el cliente gastó $850
-            const points = Math.floor(mockSpend * PERCENTAGE);
-            
-            renderData(points, mockSpend);
+            try {
+                // Llamamos a tu Worker para traer el gasto real de Odoo
+                const response = await fetch(`${workerUrl}?tel=${phone}`);
+                const data = await response.json();
+                
+                if (data.gasto !== undefined) {
+                    const gastoReal = data.gasto;
+                    const puntos = Math.floor(gastoReal * PERCENTAGE);
+                    
+                    actualizarInterfaz(puntos, gastoReal);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('motivation').innerText = "Error al conectar con Odoo.";
+            }
+        } else {
+            document.getElementById('motivation').innerText = "Usa el link enviado a tu WhatsApp.";
         }
     }
 
-    function renderData(pts, spend) {
+    function actualizarInterfaz(pts, spend) {
         document.getElementById('points-val').innerText = pts;
         document.getElementById('spend-val').innerText = `Gasto: $${spend.toLocaleString()} MXN`;
         
@@ -211,15 +196,16 @@
         const btn = document.getElementById('btn-redeem');
 
         if (pts >= MIN_POINTS) {
-            motivation.innerHTML = "<span style='color: #28c840'>✓</span> ¡Tienes un beneficio listo para canjear!";
+            motivation.innerHTML = "<span style='color: #28c840'>✓</span> ¡Tienes un beneficio listo!";
             btn.style.display = 'block';
         } else {
-            motivation.innerText = `Te faltan ${MIN_POINTS - pts} puntos para tu primer premio.`;
+            motivation.innerText = `Te faltan ${MIN_POINTS - pts} puntos para tu próximo premio.`;
         }
     }
 
     function handleRedeem() {
-        alert("Presenta este código en caja para validar tus puntos.\nCódigo: LP-" + Math.floor(Math.random() * 9000 + 1000));
+        const code = "LP-" + Math.floor(Math.random() * 9000 + 1000);
+        alert(`Código de Canje: ${code}\nMuéstralo en recepción para aplicar tu beneficio.`);
     }
 
     window.onload = init;
