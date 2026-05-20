@@ -12,7 +12,6 @@
             --text-main: #ffffff;
             --text-dim: #8b949e;
         }
-
         body {
             margin: 0;
             padding: 0;
@@ -24,98 +23,134 @@
             align-items: center;
             min-height: 100vh;
         }
-
         .container {
             width: 100%;
             max-width: 380px;
             padding: 20px;
         }
-
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
         }
-
-        .logo { font-weight: 800; font-size: 1.2rem; letter-spacing: 1px; }
-        .logo span { color: var(--accent-blue); }
-
+        .logo { 
+            font-weight: 800; 
+            font-size: 1.2rem; 
+            letter-spacing: 1px; 
+        }
+        .logo span { 
+            color: var(--accent-blue); 
+        }
         .loyalty-card {
             background-color: var(--card-bg);
-            border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 24px;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #21262d;
         }
-
-        .label {
-            text-transform: uppercase;
+        .loyalty-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(0,210,255,0.1) 0%, transparent 70%);
+            z-index: 1;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            z-index: 2;
+            position: relative;
+        }
+        .greeting {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .card-type {
             font-size: 0.75rem;
-            color: var(--text-dim);
+            text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 8px;
+            color: var(--accent-blue);
+            font-weight: 700;
         }
-
+        .points-section {
+            margin-bottom: 30px;
+            z-index: 2;
+            position: relative;
+        }
         .points-display {
             display: flex;
             align-items: baseline;
-            gap: 10px;
-            margin-bottom: 5px;
         }
-
-        .points-value { font-size: 3.5rem; font-weight: 700; }
-        .points-unit { font-size: 1.2rem; color: var(--accent-blue); font-weight: 600; }
-
-        .spend-info { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 25px; }
-
-        .progress-bar-bg {
-            background: #21262d;
-            height: 8px;
-            border-radius: 10px;
-            width: 100%;
-            margin-bottom: 10px;
+        .points-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--text-main);
         }
-
+        .points-label {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-left: 8px;
+            font-weight: 500;
+        }
+        .progress-container {
+            background-color: #21262d;
+            height: 6px;
+            border-radius: 3px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
         .progress-fill {
-            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            background: linear-gradient(90deg, #00d2ff, #0084ff);
             height: 100%;
             width: 0%;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
-            transition: width 1.5s ease-in-out;
+            border-radius: 3px;
+            transition: width 1s ease-in-out;
         }
-
-        .motivation-text { font-size: 0.85rem; color: var(--text-dim); line-height: 1.4; }
-
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2;
+            position: relative;
+        }
+        .spend-value {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        .motivation {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-top: 15px;
+            text-align: center;
+            min-height: 20px;
+        }
         .btn-redeem {
-            background: var(--accent-blue);
+            display: none;
+            width: 100%;
+            background: linear-gradient(90deg, #00d2ff, #0084ff);
             color: #000;
             border: none;
-            width: 100%;
-            padding: 16px;
-            border-radius: 14px;
+            padding: 14px;
+            border-radius: 8px;
             font-weight: 700;
-            margin-top: 30px;
+            font-size: 0.95rem;
+            margin-top: 20px;
             cursor: pointer;
-            display: none; /* Solo aparece si llega a 50 pts */
+            box-shadow: 0 4px 15px rgba(0,210,255,0.3);
+            transition: transform 0.2s;
         }
-
-        /* Estilo de los 3 cuadritos de colores */
-        .decoration {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            gap: 4px;
-        }
-
-        .dot { 
-            width: 12px; 
-            height: 7px; 
-            border-radius: 1px; 
+        .btn-redeem:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
@@ -123,55 +158,58 @@
 
 <div class="container">
     <div class="header">
-        <div class="logo">LASER <span>PLUS</span></div>
-        <div style="font-size: 0.8rem; opacity: 0.7;">Puntos de Lealtad</div>
+        <div class="logo">LASER<span>PLUS</span></div>
     </div>
 
     <div class="loyalty-card">
-        <div id="greeting" class="label" style="color: var(--accent-blue); margin-bottom: 20px;">Cargando...</div>
+        <div class="card-header">
+            <div id="greeting" class="greeting">CARGANDO...</div>
+            <div class="card-type">REWARDS</div>
+        </div>
         
-        <div class="label">Mis Puntos</div>
-        <div class="points-display">
-            <div id="points-val" class="points-value">0</div>
-            <div class="points-unit">PTS</div>
+        <div class="points-section">
+            <div class="points-display">
+                <div id="points-val" class="points-value">0</div>
+                <div class="points-label">PUNTOS LASER</div>
+            </div>
+            <div class="progress-container">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
         </div>
-        <div id="spend-val" class="spend-info">Gasto: $0 MXN</div>
 
-        <div class="progress-bar-bg">
-            <div id="progress-fill" class="progress-fill"></div>
+        <div class="card-footer">
+            <div id="spend-val" class="spend-value">Gasto: $0 MXN</div>
         </div>
-        <div id="motivation" class="motivation-text">Consultando tu historial en Odoo...</div>
-
-        <button id="btn-redeem" class="btn-redeem" onclick="handleRedeem()">CANJEAR PREMIO</button>
-
-        <div class="decoration">
-            <div class="dot" style="background: #FFD600;"></div> <div class="dot" style="background: #FF007A;"></div> <div class="dot" style="background: #00D2FF;"></div> </div>
     </div>
+
+    <div id="motivation" class="motivation">Conectando con el servidor seguro...</div>
+    
+    <button id="btn-redeem" class="btn-redeem" onclick="handleRedeem()">CANJEAR RECOMPENSA</button>
 </div>
 
 <script>
-    // CONFIGURACIÓN INICIAL
-    const MIN_POINTS = 50; 
-    const PERCENTAGE = 0.05; // 5% de lealtad
-    
-    // --- PEGA AQUÍ TU LINK DE CLOUDFLARE ---
-    const workerUrl = "https://laser-plus-api.burnsvibb-1.workers.dev/"; 
+// --- CONFIGURACIÓN INICIAL ---
+const MIN_POINTS = 50;
+const PERCENTAGE = 0.05; // 5% de lealtad
+const MAX_POINTS = 1000; // Tope de puntos permitidos
 
-    async function init() {
-        const params = new URLSearchParams(window.location.search);
-        const name = params.get('nombre') || 'CLIENTE';
-        
-        // Ahora leemos el 'id' que viene de Odoo
-        let idCliente = params.get('id');
-        
-        document.getElementById('greeting').innerText = `HOLA, ${name.toUpperCase()}`;
-    
-        if (idCliente) {
-        // Limpiamos cualquier espacio por si acaso
+// --- LINK DE TU WORKER DE CLOUDFLARE ---
+const workerUrl = "https://laser-plus-api.burnsvibb-1.workers.dev/";
+
+async function init() {
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('nombre') || 'CLIENTE';
+    let idCliente = params.get('id');
+
+    // Desplegamos el saludo inicial
+    document.getElementById('greeting').innerText = `HOLA, ${name.toUpperCase()}`;
+
+    if (idCliente) {
+        // Limpiamos espacios en blanco del ID por seguridad
         idCliente = idCliente.replace(/\s+/g, '');
-        
+
         try {
-            // Le mandamos el id a tu Worker de Cloudflare
+            // Hacemos la consulta al Worker usando comillas invertidas corregidas
             const response = await fetch(`${workerUrl}?id=${idCliente}`);
             const data = await response.json();
 
@@ -179,15 +217,15 @@
                 const gastoReal = data.gasto;
                 let puntos = Math.floor(gastoReal * PERCENTAGE);
                 
-                // Mantenemos el tope de 1000 puntos que pusimos hace rato
                 if (puntos > MAX_POINTS) {
                     puntos = MAX_POINTS;
                 }
-                
                 actualizarInterfaz(puntos, gastoReal);
+            } else {
+                document.getElementById('motivation').innerText = "Cliente no encontrado en Odoo.";
             }
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Error original:", error);
             document.getElementById('motivation').innerText = "Error al conectar con Odoo.";
         }
     } else {
@@ -195,30 +233,34 @@
     }
 }
 
-    function actualizarInterfaz(pts, spend) {
-        document.getElementById('points-val').innerText = pts;
-        document.getElementById('spend-val').innerText = `Gasto: $${spend.toLocaleString()} MXN`;
-        
-        const progress = Math.min((pts / MIN_POINTS) * 100, 100);
-        document.getElementById('progress-fill').style.width = progress + '%';
+function actualizarInterfaz(pts, spend) {
+    // Seteamos los valores en pantalla
+    document.getElementById('points-val').innerText = pts;
+    document.getElementById('spend-val').innerText = `Gasto: $${spend.toLocaleString()} MXN`;
+    
+    // Calculamos y movemos la barra de progreso
+    const progress = Math.min((pts / MIN_POINTS) * 100, 100);
+    document.getElementById('progress-fill').style.width = progress + '%';
+    
+    const motivation = document.getElementById('motivation');
+    const btn = document.getElementById('btn-redeem');
 
-        const motivation = document.getElementById('motivation');
-        const btn = document.getElementById('btn-redeem');
-
-        if (pts >= MIN_POINTS) {
-            motivation.innerHTML = "<span style='color: #28c840'>✓</span> ¡Tienes un beneficio listo!";
-            btn.style.display = 'block';
-        } else {
-            motivation.innerText = `Te faltan ${MIN_POINTS - pts} puntos para tu próximo premio.`;
-        }
+    // Evaluamos si ya puede canjear premio
+    if (pts >= MIN_POINTS) {
+        motivation.innerHTML = "<span style='color: #28c840'>✓</span> ¡Tienes un beneficio listo!";
+        btn.style.display = 'block';
+    } else {
+        motivation.innerText = `Te faltan ${MIN_POINTS - pts} puntos para tu próximo premio.`;
     }
+}
 
-    function handleRedeem() {
-        const code = "LP-" + Math.floor(Math.random() * 9000 + 1000);
-        alert(`Código de Canje: ${code}\nMuéstralo en recepción para aplicar tu beneficio.`);
-    }
+function handleRedeem() {
+    const code = "LP-" + Math.floor(Math.random() * 9000 + 1000);
+    alert(`Código de Canje: ${code}\nMuéstralo en recepción para aplicar tu beneficio.`);
+}
 
-    window.onload = init;
+// Inicializa todo al cargar la página
+window.onload = init;
 </script>
 
 </body>
