@@ -160,30 +160,40 @@
     async function init() {
         const params = new URLSearchParams(window.location.search);
         const name = params.get('nombre') || 'CLIENTE';
-        const phone = params.get('tel');
+        
+        // Ahora leemos el 'id' que viene de Odoo
+        let idCliente = params.get('id');
         
         document.getElementById('greeting').innerText = `HOLA, ${name.toUpperCase()}`;
+    
+        if (idCliente) {
+        // Limpiamos cualquier espacio por si acaso
+        idCliente = idCliente.replace(/\s+/g, '');
+        
+        try {
+            // Le mandamos el id a tu Worker de Cloudflare
+            const response = await fetch(`${workerUrl}?id=${idCliente}`);
+            const data = await response.json();
 
-        if (phone) {
-            try {
-                // Llamamos a tu Worker para traer el gasto real de Odoo
-                const response = await fetch(`${workerUrl}?tel=${phone}`);
-                const data = await response.json();
+            if (data.gasto !== undefined) {
+                const gastoReal = data.gasto;
+                let puntos = Math.floor(gastoReal * PERCENTAGE);
                 
-                if (data.gasto !== undefined) {
-                    const gastoReal = data.gasto;
-                    const puntos = Math.floor(gastoReal * PERCENTAGE);
-                    
-                    actualizarInterfaz(puntos, gastoReal);
+                // Mantenemos el tope de 1000 puntos que pusimos hace rato
+                if (puntos > MAX_POINTS) {
+                    puntos = MAX_POINTS;
                 }
-            } catch (error) {
-                console.error("Error:", error);
-                document.getElementById('motivation').innerText = "Error al conectar con Odoo.";
+                
+                actualizarInterfaz(puntos, gastoReal);
             }
-        } else {
-            document.getElementById('motivation').innerText = "Usa el link enviado a tu WhatsApp.";
+        } catch (error) {
+            console.error("Error:", error);
+            document.getElementById('motivation').innerText = "Error al conectar con Odoo.";
         }
+    } else {
+        document.getElementById('motivation').innerText = "Usa el link enviado a tu WhatsApp.";
     }
+}
 
     function actualizarInterfaz(pts, spend) {
         document.getElementById('points-val').innerText = pts;
