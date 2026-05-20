@@ -205,11 +205,9 @@ async function init() {
     document.getElementById('greeting').innerText = `HOLA, ${name.toUpperCase()}`;
 
     if (idCliente) {
-        // Limpiamos espacios en blanco del ID por seguridad
         idCliente = idCliente.replace(/\s+/g, '');
 
         try {
-            // Hacemos la consulta al Worker usando comillas invertidas corregidas
             const response = await fetch(`${workerUrl}?id=${idCliente}`);
             const data = await response.json();
 
@@ -234,18 +232,15 @@ async function init() {
 }
 
 function actualizarInterfaz(pts, spend) {
-    // Seteamos los valores en pantalla
     document.getElementById('points-val').innerText = pts;
     document.getElementById('spend-val').innerText = `Gasto: $${spend.toLocaleString()} MXN`;
     
-    // Calculamos y movemos la barra de progreso
     const progress = Math.min((pts / MIN_POINTS) * 100, 100);
     document.getElementById('progress-fill').style.width = progress + '%';
     
     const motivation = document.getElementById('motivation');
     const btn = document.getElementById('btn-redeem');
 
-    // Evaluamos si ya puede canjear premio
     if (pts >= MIN_POINTS) {
         motivation.innerHTML = "<span style='color: #28c840'>✓</span> ¡Tienes un beneficio listo!";
         btn.style.display = 'block';
@@ -259,7 +254,6 @@ function handleRedeem() {
     alert(`Código de Canje: ${code}\nMuéstralo en recepción para aplicar tu beneficio.`);
 }
 
-// Inicializa todo al cargar la página
 window.onload = init;
 </script>
 
