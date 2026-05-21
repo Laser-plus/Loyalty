@@ -11,7 +11,7 @@
             --text-main: #ffffff;
             --text-dim: #6e7681;
             
-            /* Los 3 colores exactos de tu logotipo */
+            /* Colores de tu marca */
             --logo-yellow: #e2e600;
             --logo-pink: #e51a75;
             --logo-blue: #00bfff;
@@ -41,7 +41,7 @@
             flex-direction: column;
         }
         
-        /* === LOGOTIPO RECREADO AD HOC === */
+        /* === LOGOTIPO MINIMALISTA EN BLANCO PURE === */
         .brand-container {
             text-align: center;
             margin-top: 30px;
@@ -52,62 +52,16 @@
             font-weight: 800;
             line-height: 0.9;
             letter-spacing: -0.5px;
-            color: var(--text-main);
+            color: #ffffff;
             display: inline-block;
+            text-transform: lowercase;
         }
         .brand-logo .laser {
-            position: relative;
             display: block;
-        }
-        /* Acento amarillo sobre la 'e' de laser */
-        .brand-logo .laser span.e-char {
-            position: relative;
-            display: inline-block;
-        }
-        .brand-logo .laser span.e-char::before {
-            content: '';
-            position: absolute;
-            top: -4px;
-            left: 2px;
-            width: 80%;
-            height: 4px;
-            background-color: var(--logo-yellow);
-            border-radius: 1px;
         }
         .brand-logo .plus {
-            position: relative;
             display: block;
             margin-top: 2px;
-        }
-        /* Acento rosa en el punto de la 'i' de plus */
-        .brand-logo .plus span.i-char {
-            position: relative;
-            display: inline-block;
-        }
-        .brand-logo .plus span.i-char::before {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 5px;
-            height: 5px;
-            background-color: var(--logo-pink);
-            border-radius: 1px;
-        }
-        /* Acento azul debajo de la 'u' de plus */
-        .brand-logo .plus span.u-char {
-            position: relative;
-            display: inline-block;
-        }
-        .brand-logo .plus span.u-char::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 1px;
-            width: 90%;
-            height: 4px;
-            background-color: var(--logo-blue);
-            border-radius: 1px;
         }
 
         .header-meta {
@@ -141,7 +95,6 @@
             border: 1px solid #1f2631;
             margin-bottom: 20px;
         }
-        /* Luces de fondo basadas en los colores del logo */
         .loyalty-card::after {
             content: '';
             position: absolute;
@@ -189,8 +142,10 @@
         .spend-value {
             font-size: 0.95rem;
             color: #c9d1d9;
-            margin-bottom: 28px;
+            margin-bottom: 25px;
         }
+
+        /* === BARRA DE PROGRESO CON GRADIENTE CORPORATIVO === */
         .progress-container {
             background-color: #161d27;
             height: 8px;
@@ -198,14 +153,15 @@
             overflow: hidden;
             margin-bottom: 16px;
         }
-        /* Barra de progreso con gradiente degradado del azul al rosa del logo */
+        /* Gradiente continuo que pasa por los colores del logotipo */
         .progress-fill {
-            background: linear-gradient(90deg, var(--logo-blue), var(--logo-pink));
+            background: linear-gradient(90deg, var(--logo-blue) 0%, var(--logo-pink) 50%, var(--logo-yellow) 100%);
             height: 100%;
             width: 0%;
             border-radius: 4px;
             transition: width 1s ease-in-out;
         }
+
         .card-inner-footer {
             display: flex;
             justify-content: space-between;
@@ -217,7 +173,7 @@
             color: var(--text-dim);
         }
         
-        /* Bloques de color idénticos al orden del logotipo */
+        /* Cuadritos estáticos decorativos abajo a la derecha */
         .color-dots {
             display: flex;
             gap: 6px;
@@ -238,7 +194,6 @@
             margin-top: 15px;
         }
         
-        /* Botón fijo abajo usando el azul vibrante */
         .btn-redeem {
             display: none;
             position: absolute;
@@ -269,8 +224,8 @@
 <div class="screen-container">
     <div class="brand-container">
         <div class="brand-logo">
-            <div class="laser">las<span class="e-char">e</span>r</div>
-            <div class="plus">p<span class="i-char">l</span><span class="u-char">u</span>s</div>
+            <div class="laser">laser</div>
+            <div class="plus">plus</div>
         </div>
     </div>
 
@@ -363,6 +318,7 @@ function actualizarInterfaz(pts, spend) {
     document.getElementById('points-val').innerText = pts;
     document.getElementById('spend-val').innerText = `Gasto: $${spend.toLocaleString()} MXN`;
     
+    // Rellenado fluido de la barra con base en la meta de 50 puntos
     const progress = Math.min((pts / MIN_POINTS) * 100, 100);
     document.getElementById('progress-fill').style.width = progress + '%';
     
