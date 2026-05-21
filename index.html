@@ -2,239 +2,321 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laser Plus - Programa de Lealtad</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Laser Plus - Puntos de Lealtad</title>
     <style>
         :root {
-            --bg-color: #050709; /* Negro profundo de fondo */
-            --card-bg: linear-gradient(135deg, #12161a 0%, #0a0c0e 100%); /* Degradado premium oscuro */
-            --accent-blue: #00d2ff;
+            --bg-color: #06090e;
+            --card-bg: linear-gradient(135deg, #141923 0%, #0d1117 100%);
             --text-main: #ffffff;
-            --text-dim: #8b949e;
+            --text-dim: #6e7681;
+            
+            /* Los 3 colores exactos de tu logotipo */
+            --logo-yellow: #e2e600;
+            --logo-pink: #e51a75;
+            --logo-blue: #00bfff;
+        }
+        * {
+            box-sizing: border-box;
         }
         body {
             margin: 0;
             padding: 0;
             background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
-        .container {
+        .screen-container {
             width: 100%;
-            max-width: 380px;
-            padding: 20px;
+            max-width: 412px;
+            height: 100vh;
+            padding: 24px 20px 100px 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
         }
-        .header {
+        
+        /* === LOGOTIPO RECREADO AD HOC === */
+        .brand-container {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 35px;
+        }
+        .brand-logo {
+            font-size: 2.4rem;
+            font-weight: 800;
+            line-height: 0.9;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+            display: inline-block;
+        }
+        .brand-logo .laser {
+            position: relative;
+            display: block;
+        }
+        /* Acento amarillo sobre la 'e' de laser */
+        .brand-logo .laser span.e-char {
+            position: relative;
+            display: inline-block;
+        }
+        .brand-logo .laser span.e-char::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 2px;
+            width: 80%;
+            height: 4px;
+            background-color: var(--logo-yellow);
+            border-radius: 1px;
+        }
+        .brand-logo .plus {
+            position: relative;
+            display: block;
+            margin-top: 2px;
+        }
+        /* Acento rosa en el punto de la 'i' de plus */
+        .brand-logo .plus span.i-char {
+            position: relative;
+            display: inline-block;
+        }
+        .brand-logo .plus span.i-char::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 5px;
+            height: 5px;
+            background-color: var(--logo-pink);
+            border-radius: 1px;
+        }
+        /* Acento azul debajo de la 'u' de plus */
+        .brand-logo .plus span.u-char {
+            position: relative;
+            display: inline-block;
+        }
+        .brand-logo .plus span.u-char::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 1px;
+            width: 90%;
+            height: 4px;
+            background-color: var(--logo-blue);
+            border-radius: 1px;
+        }
+
+        .header-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
+            padding: 0 4px;
         }
-        .logo { 
-            font-weight: 800; 
-            font-size: 1.3rem; 
-            letter-spacing: 1px; 
-        }
-        .logo span { 
-            color: var(--accent-blue); 
-        }
-        .loyalty-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 24px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
-            border: 1px solid #1f242c;
-        }
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 25px;
-        }
-        .greeting {
+        .header-meta .title-left {
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 700;
+            text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .card-type {
+        .header-meta .title-left span {
+            color: var(--logo-blue);
+        }
+        .header-meta .title-right {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        /* === TARJETA PREMIUM === */
+        .loyalty-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 28px 24px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.03);
+            border: 1px solid #1f2631;
+            margin-bottom: 20px;
+        }
+        /* Luces de fondo basadas en los colores del logo */
+        .loyalty-card::after {
+            content: '';
+            position: absolute;
+            bottom: 10%;
+            right: 5%;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(0, 191, 255, 0.08) 0%, transparent 75%);
+            pointer-events: none;
+        }
+        .greeting {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--logo-blue);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+        .section-title {
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: var(--accent-blue);
-            font-weight: 700;
-        }
-        
-        /* 🔲 LOS 3 CUADRITOS DE COLORES PREMIUM 🔲 */
-        .reward-boxes {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 25px;
-            gap: 12px;
-        }
-        .box {
-            flex: 1;
-            height: 75px;
-            border-radius: 12px;
-            background: #111418;
-            border: 2px solid #1f242c;
-            transition: all 0.5s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0.25; /* Apagados por defecto */
-        }
-        /* Estados activos con sus degradados correspondientes */
-        .box.level-1.active {
-            opacity: 1;
-            background: linear-gradient(135deg, #3b1c57 0%, #1a0b2e 100%);
-            border-color: #a855f7;
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
-        }
-        .box.level-2.active {
-            opacity: 1;
-            background: linear-gradient(135deg, #1c3d57 0%, #0b1a2e 100%);
-            border-color: #2563eb;
-            box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
-        }
-        .box.level-3.active {
-            opacity: 1;
-            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-            border-color: #00d2ff;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
-        }
-
-        .points-section {
-            margin-bottom: 20px;
+            color: var(--text-dim);
+            font-weight: 600;
+            margin-bottom: 12px;
         }
         .points-display {
             display: flex;
             align-items: baseline;
+            margin-bottom: 10px;
         }
         .points-value {
-            font-size: 3.2rem;
+            font-size: 5rem;
             font-weight: 800;
             line-height: 1;
             color: var(--text-main);
         }
         .points-label {
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            margin-left: 10px;
-            font-weight: 500;
+            font-size: 1.6rem;
+            color: var(--logo-blue);
+            margin-left: 12px;
+            font-weight: 800;
             letter-spacing: 0.5px;
         }
-        .progress-container {
-            background-color: #161b22;
-            height: 10px;
-            border-radius: 5px;
-            margin-top: 15px;
-            overflow: hidden;
-            border: 1px solid #21262d;
+        .spend-value {
+            font-size: 0.95rem;
+            color: #c9d1d9;
+            margin-bottom: 28px;
         }
+        .progress-container {
+            background-color: #161d27;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        /* Barra de progreso con gradiente degradado del azul al rosa del logo */
         .progress-fill {
-            background: linear-gradient(90deg, #a855f7, #2563eb, #00d2ff); /* Tu hermosa barra multicolor */
+            background: linear-gradient(90deg, var(--logo-blue), var(--logo-pink));
             height: 100%;
             width: 0%;
-            border-radius: 5px;
+            border-radius: 4px;
             transition: width 1s ease-in-out;
         }
-        .card-footer {
+        .card-inner-footer {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-        }
-        .spend-value {
-            font-size: 0.85rem;
-            color: var(--text-dim);
-        }
-        .tickets-count {
-            font-size: 0.85rem;
-            color: var(--text-dim);
-        }
-        .motivation {
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            margin-top: 20px;
-            text-align: center;
+            align-items: flex-end;
             min-height: 20px;
         }
+        .odoo-status {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+        
+        /* Bloques de color idénticos al orden del logotipo */
+        .color-dots {
+            display: flex;
+            gap: 6px;
+        }
+        .dot {
+            width: 14px;
+            height: 7px;
+            border-radius: 1px;
+        }
+        .dot.yellow { background-color: var(--logo-yellow); }
+        .dot.pink { background-color: var(--logo-pink); }
+        .dot.blue { background-color: var(--logo-blue); }
+
+        .motivation-text {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        /* Botón fijo abajo usando el azul vibrante */
         .btn-redeem {
-            display: none; /* Se activa con Javascript al llegar a 50 pts */
-            width: 100%;
-            background: linear-gradient(90deg, #00d2ff, #0084ff);
-            color: #000;
+            display: none;
+            position: absolute;
+            bottom: 24px;
+            left: 20px;
+            right: 20px;
+            background: linear-gradient(90deg, var(--logo-blue), #0088cc);
+            color: #06090e;
             border: none;
-            padding: 15px;
-            border-radius: 12px;
+            padding: 16px;
+            border-radius: 18px;
             font-weight: 700;
-            font-size: 0.95rem;
-            margin-top: 20px;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(0,210,255,0.4);
-            transition: transform 0.2s;
+            box-shadow: 0 5px 20px rgba(0,191,255,0.3);
+            transition: transform 0.1s ease;
+            text-align: center;
         }
         .btn-redeem:active {
-            transform: scale(0.97);
+            transform: scale(0.98);
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <div class="logo">LASER<span>PLUS</span></div>
+<div class="screen-container">
+    <div class="brand-container">
+        <div class="brand-logo">
+            <div class="laser">las<span class="e-char">e</span>r</div>
+            <div class="plus">p<span class="i-char">l</span><span class="u-char">u</span>s</div>
+        </div>
+    </div>
+
+    <div class="header-meta">
+        <div class="title-left">LASER <span>PLUS</span></div>
+        <div class="title-right">Puntos de Lealtad</div>
     </div>
 
     <div class="loyalty-card">
-        <div class="card-header">
-            <div id="greeting" class="greeting">CARGANDO...</div>
-            <div class="card-type">REWARDS CLUB</div>
-        </div>
-
-        <div class="reward-boxes">
-            <div id="box-1" class="box level-1"></div>
-            <div id="box-2" class="box level-2"></div>
-            <div id="box-3" class="box level-3"></div>
-        </div>
+        <div id="greeting" class="greeting">HOLA, CLIENTE</div>
+        <div class="section-title">Mis Puntos</div>
         
-        <div class="points-section">
-            <div class="points-display">
-                <div id="points-val" class="points-value">0</div>
-                <div class="points-label">PUNTOS LASER</div>
-            </div>
-            <div class="progress-container">
-                <div id="progress-fill" class="progress-fill"></div>
-            </div>
+        <div class="points-display">
+            <div id="points-val" class="points-value">0</div>
+            <div class="points-label">PTS</div>
         </div>
 
-        <div class="card-footer">
-            <div id="spend-val" class="spend-value">Gasto: $0 MXN</div>
-            <div id="tickets-val" class="tickets-count">0 Tickets</div>
+        <div id="spend-val" class="spend-value">Gasto: $0 MXN</div>
+        
+        <div class="progress-container">
+            <div id="progress-fill" class="progress-fill"></div>
+        </div>
+
+        <div class="card-inner-footer">
+            <div id="odoo-status" class="odoo-status">Conectando con Odoo...</div>
+            <div class="color-dots">
+                <div class="dot yellow"></div>
+                <div class="dot pink"></div>
+                <div class="dot blue"></div>
+            </div>
         </div>
     </div>
 
-    <div id="motivation" class="motivation">Estableciendo conexión segura...</div>
+    <div id="motivation" class="motivation-text"></div>
     
-    <button id="btn-redeem" class="btn-redeem" onclick="handleRedeem()">CANJEAR RECOMPENSA</button>
+    <button id="btn-redeem" class="btn-redeem" onclick="handleRedeem()">Usar mis puntos</button>
 </div>
 
 <script>
-// --- CONFIGURACIÓN REGLAS DEL JUEGO ---
 const MIN_POINTS = 50;
-const PERCENTAGE = 0.05; // 5% de acumulación
-const MAX_POINTS = 1000;
+const PERCENTAGE = 0.05; 
+const MAX_POINTS = 1000; 
 
 let currentIdCliente = null;
 let puntosBrutosTotales = 0;
 
-// Link de tu Worker en Cloudflare
 const workerUrl = "https://laser-plus-api.burnsvibb-1.workers.dev/";
 
 async function init() {
@@ -253,70 +335,45 @@ async function init() {
 
             if (data.gasto !== undefined) {
                 const gastoReal = data.gasto;
-                const totalTickets = data.total_tickets || 0;
+                document.getElementById('odoo-status').innerText = ""; 
                 
-                // 1. Calcular puntos brutos desde el 19 de mayo en Odoo
                 puntosBrutosTotales = Math.floor(gastoReal * PERCENTAGE);
-                if (puntosBrutosTotales > MAX_POINTS) puntosBrutosTotales = MAX_POINTS;
+                if (puntosBrutosTotales > MAX_POINTS) {
+                    puntosBrutosTotales = MAX_POINTS;
+                }
 
-                // 2. Descontar lo que ya se canjeó en este teléfono
                 const puntosCanjeadosAnteriores = parseInt(localStorage.getItem(`canjeados_${currentIdCliente}`) || "0", 10);
-                
                 let puntosActuales = puntosBrutosTotales - puntosCanjeadosAnteriores;
                 if (puntosActuales < 0) puntosActuales = 0;
 
-                actualizarInterfaz(puntosActuales, gastoReal, totalTickets);
+                actualizarInterfaz(puntosActuales, gastoReal);
             } else {
-                document.getElementById('motivation').innerText = "Cliente no localizado.";
+                document.getElementById('odoo-status').innerText = "Cliente no encontrado.";
             }
         } catch (error) {
-            console.error("Error original:", error);
-            document.getElementById('motivation').innerText = "Fallo de comunicación con Odoo.";
+            console.error(error);
+            document.getElementById('odoo-status').innerText = "Error al conectar con Odoo.";
         }
     } else {
-        document.getElementById('motivation').innerText = "Acceso inválido. Solicita tu enlace.";
+        document.getElementById('odoo-status').innerText = "Falta ID de cliente.";
     }
 }
 
-function actualizarInterfaz(pts, spend, tickets) {
-    document.getElementById('points-val').innerText = pts.toLocaleString();
+function actualizarInterfaz(pts, spend) {
+    document.getElementById('points-val').innerText = pts;
     document.getElementById('spend-val').innerText = `Gasto: $${spend.toLocaleString()} MXN`;
-    document.getElementById('tickets-val').innerText = `${tickets} Tickets`;
     
-    // Calcular porcentaje de barra
     const progress = Math.min((pts / MIN_POINTS) * 100, 100);
     document.getElementById('progress-fill').style.width = progress + '%';
     
-    // --- LÓGICA DE ENCENDIDO DE LOS 3 CUADRITOS ---
-    const box1 = document.getElementById('box-1');
-    const box2 = document.getElementById('box-2');
-    const box3 = document.getElementById('box-3');
-
-    // Reseteamos estados
-    box1.classList.remove('active');
-    box2.classList.remove('active');
-    box3.classList.remove('active');
-
-    if (pts >= 15 && pts < 35) {
-        box1.classList.add('active'); // Se prende el primero (Morado)
-    } else if (pts >= 35 && pts < MIN_POINTS) {
-        box1.classList.add('active');
-        box2.classList.add('active'); // Se prenden los primeros dos (Morado + Azul)
-    } else if (pts >= MIN_POINTS) {
-        box1.classList.add('active');
-        box2.classList.add('active');
-        box3.classList.add('active'); // ¡Full combo! Se prenden los tres (Morado + Azul + Aqua brillante)
-    }
-
-    // --- MANEJO DEL BOTÓN Y MOTIVACIÓN ---
     const motivation = document.getElementById('motivation');
     const btn = document.getElementById('btn-redeem');
 
     if (pts >= MIN_POINTS) {
-        motivation.innerHTML = "<span style='color: #00d2ff'>✓</span> ¡Beneficio desbloqueado con éxito!";
-        btn.style.display = 'block';
+        motivation.innerHTML = "";
+        btn.style.display = 'block'; 
     } else {
-        motivation.innerText = `Te faltan ${MIN_POINTS - pts} puntos para reclamar tu premio.`;
+        motivation.innerText = `Te faltan ${MIN_POINTS - pts} puntos para tu próximo premio.`;
         btn.style.display = 'none';
     }
 }
@@ -324,15 +381,14 @@ function actualizarInterfaz(pts, spend, tickets) {
 function handleRedeem() {
     if (!currentIdCliente) return;
 
-    const confirmar = confirm("¿Estás en el mostrador de Laser Plus?\n\nAl aceptar, el personal aplicará tu descuento manual y tus puntos digitales se reiniciarán.");
+    const confirmar = confirm("¿Estás frente al mostrador de Laser Plus y deseas usar tus puntos?\n\nEsta acción reiniciará tu saldo actual en la pantalla.");
     
     if (confirmar) {
         localStorage.setItem(`canjeados_${currentIdCliente}`, puntosBrutosTotales);
         
         const code = "LP-" + Math.floor(Math.random() * 9000 + 1000);
-        alert(`¡Canje Confirmado!\n\nCódigo de Validación: ${code}\nMuestra esta alerta en recepción para aplicar tu recompensa.`);
+        alert(`¡Puntos Redimidos!\n\nCódigo de Verificación: ${code}\nMuestra esta pantalla en recepción para aplicar tu descuento manual.`);
         
-        // Recarga limpia de interfaz para pintar en 0 de inmediato
         init();
     }
 }
