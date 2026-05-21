@@ -193,6 +193,10 @@ const MIN_POINTS = 50;
 const PERCENTAGE = 0.05; // 5% de lealtad
 const MAX_POINTS = 1000; // Tope de puntos permitidos
 
+// Variables globales para el manejo del cliente actual
+let currentIdCliente = null;
+let puntosBrutosTotales = 0;
+
 // --- LINK DE TU WORKER DE CLOUDFLARE ---
 const workerUrl = "https://laser-plus-api.burnsvibb-1.workers.dev/";
 
@@ -205,20 +209,29 @@ async function init() {
     document.getElementById('greeting').innerText = `HOLA, ${name.toUpperCase()}`;
 
     if (idCliente) {
-        idCliente = idCliente.replace(/\s+/g, '');
+        currentIdCliente = idCliente.replace(/\s+/g, '');
 
         try {
-            const response = await fetch(`${workerUrl}?id=${idCliente}`);
+            const response = await fetch(`${workerUrl}?id=${currentIdCliente}`);
             const data = await response.json();
 
             if (data.gasto !== undefined) {
                 const gastoReal = data.gasto;
-                let puntos = Math.floor(gastoReal * PERCENTAGE);
                 
-                if (puntos > MAX_POINTS) {
-                    puntos = MAX_POINTS;
+                // 1. Calculamos los puntos totales generados en Odoo desde el 19 de Mayo
+                puntosBrutosTotales = Math.floor(gastoReal * PERCENTAGE);
+                if (puntosBrutosTotales > MAX_POINTS) {
+                    puntosBrutosTotales = MAX_POINTS;
                 }
-                actualizarInterfaz(puntos, gastoReal);
+
+                // 2. Revisamos la memoria del celular si ya usó puntos anteriormente
+                const puntosCanjeadosAnteriores = parseInt(localStorage.getItem(`canjeados_${currentIdCliente}`) || "0", 10);
+                
+                // 3. Obtenemos los puntos reales a mostrar (Restamos lo ya canjeado)
+                let puntosActuales = puntosBrutosTotales - puntosCanjeadosAnteriores;
+                if (puntosActuales < 0) puntosActuales = 0;
+
+                actualizarInterfaz(puntosActuales, gastoReal);
             } else {
                 document.getElementById('motivation').innerText = "Cliente no encontrado en Odoo.";
             }
@@ -235,6 +248,7 @@ function actualizarInterfaz(pts, spend) {
     document.getElementById('points-val').innerText = pts;
     document.getElementById('spend-val').innerText = `Gasto: $${spend.toLocaleString()} MXN`;
     
+    // La barra de progreso se llena en base al mínimo requerido (50 puntos)
     const progress = Math.min((pts / MIN_POINTS) * 100, 100);
     document.getElementById('progress-fill').style.width = progress + '%';
     
@@ -242,16 +256,30 @@ function actualizarInterfaz(pts, spend) {
     const btn = document.getElementById('btn-redeem');
 
     if (pts >= MIN_POINTS) {
-        motivation.innerHTML = "<span style='color: #28c840'>✓</span> ¡Tienes un beneficio listo!";
+        motivation.innerHTML = "<span style='color: #00d2ff'>✓</span> ¡Tienes un beneficio listo!";
         btn.style.display = 'block';
     } else {
         motivation.innerText = `Te faltan ${MIN_POINTS - pts} puntos para tu próximo premio.`;
+        btn.style.display = 'none';
     }
 }
 
 function handleRedeem() {
-    const code = "LP-" + Math.floor(Math.random() * 9000 + 1000);
-    alert(`Código de Canje: ${code}\nMuéstralo en recepción para aplicar tu beneficio.`);
+    if (!currentIdCliente) return;
+
+    const confirmar = confirm("¿Estás frente al mostrador de Laser Plus y deseas aplicar tu beneficio? \n\nEsta acción reiniciará tus puntos actuales.");
+    
+    if (confirmar) {
+        // Guardamos en el celular del cliente que ya consumió todos los puntos acumulados hasta hoy
+        localStorage.setItem(`canjeados_${currentIdCliente}`, puntosBrutosTotales);
+        
+        // Generamos el código visual de confirmación para caja
+        const code = "LP-" + Math.floor(Math.random() * 9000 + 1000);
+        alert(`¡Puntos Redimidos!\n\nCódigo de Canje: ${code}\nMuestra esta pantalla en recepción para aplicar tu descuento manual.`);
+        
+        // Recargamos la interfaz para que el saldo baje a 0 inmediatamente
+        init();
+    }
 }
 
 window.onload = init;
