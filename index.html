@@ -56,13 +56,8 @@
             display: inline-block;
             text-transform: lowercase;
         }
-        .brand-logo .laser {
-            display: block;
-        }
-        .brand-logo .plus {
-            display: block;
-            margin-top: 2px;
-        }
+        .brand-logo .laser { display: block; }
+        .brand-logo .plus { display: block; margin-top: 2px; }
 
         .header-meta {
             display: flex;
@@ -77,13 +72,8 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .header-meta .title-left span {
-            color: var(--logo-blue);
-        }
-        .header-meta .title-right {
-            font-size: 0.85rem;
-            color: var(--text-dim);
-        }
+        .header-meta .title-left span { color: var(--logo-blue); }
+        .header-meta .title-right { font-size: 0.85rem; color: var(--text-dim); }
 
         /* === TARJETA PREMIUM === */
         .loyalty-card {
@@ -153,7 +143,6 @@
             overflow: hidden;
             margin-bottom: 16px;
         }
-        /* Gradiente continuo que pasa por los colores del logotipo */
         .progress-fill {
             background: linear-gradient(90deg, var(--logo-blue) 0%, var(--logo-pink) 50%, var(--logo-yellow) 100%);
             height: 100%;
@@ -166,26 +155,45 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            min-height: 20px;
+            min-height: 35px;
         }
         .odoo-status {
             font-size: 0.8rem;
             color: var(--text-dim);
+            max-width: 60%;
         }
         
-        /* Cuadritos estáticos decorativos abajo a la derecha */
+        /* === INTERFAZ DE CUADRITOS DE META CON MARGENES === */
         .color-dots {
             display: flex;
-            gap: 6px;
+            gap: 8px;
         }
         .dot {
-            width: 14px;
-            height: 7px;
-            border-radius: 1px;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background-color: transparent; /* Fondo vacío por defecto */
+            transition: background-color 0.4s ease, box-shadow 0.4s ease;
         }
-        .dot.yellow { background-color: var(--logo-yellow); }
-        .dot.pink { background-color: var(--logo-pink); }
-        .dot.blue { background-color: var(--logo-blue); }
+        
+        /* Estados por defecto (SÓLO EL CONTORNO/MARGEN) */
+        .dot.yellow { border: 2px solid var(--logo-yellow); }
+        .dot.pink { border: 2px solid var(--logo-pink); }
+        .dot.blue { border: 2px solid var(--logo-blue); }
+
+        /* Estados activos (SE LLENAN COMPLETAMENTE) */
+        .dot.yellow.filled {
+            background-color: var(--logo-yellow);
+            box-shadow: 0 0 10px rgba(226, 230, 0, 0.4);
+        }
+        .dot.pink.filled {
+            background-color: var(--logo-pink);
+            box-shadow: 0 0 10px rgba(229, 26, 117, 0.4);
+        }
+        .dot.blue.filled {
+            background-color: var(--logo-blue);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.4);
+        }
 
         .motivation-text {
             font-size: 0.9rem;
@@ -252,9 +260,9 @@
         <div class="card-inner-footer">
             <div id="odoo-status" class="odoo-status">Conectando con Odoo...</div>
             <div class="color-dots">
-                <div class="dot yellow"></div>
-                <div class="dot pink"></div>
-                <div class="dot blue"></div>
+                <div id="dot-20" class="dot yellow" title="Meta 20 pts"></div>
+                <div id="dot-40" class="dot pink" title="Meta 40 pts"></div>
+                <div id="dot-50" class="dot blue" title="Meta 50 pts"></div>
             </div>
         </div>
     </div>
@@ -318,9 +326,23 @@ function actualizarInterfaz(pts, spend) {
     document.getElementById('points-val').innerText = pts;
     document.getElementById('spend-val').innerText = `Gasto: $${spend.toLocaleString()} MXN`;
     
-    // Rellenado fluido de la barra con base en la meta de 50 puntos
+    // Rellenado fluido de la barra
     const progress = Math.min((pts / MIN_POINTS) * 100, 100);
     document.getElementById('progress-fill').style.width = progress + '%';
+    
+    // === LÓGICA DE CONTROL DE LLENADO DE CUADRITOS ===
+    const d20 = document.getElementById('dot-20');
+    const d40 = document.getElementById('dot-40');
+    const d50 = document.getElementById('dot-50');
+
+    // Cuadrito Amarillo (Meta 20)
+    if (pts >= 20) { d20.classList.add('filled'); } else { d20.classList.remove('filled'); }
+    
+    // Cuadrito Rosa (Meta 40)
+    if (pts >= 40) { d40.classList.add('filled'); } else { d40.classList.remove('filled'); }
+    
+    // Cuadrito Azul (Meta 50)
+    if (pts >= 50) { d50.classList.add('filled'); } else { d50.classList.remove('filled'); }
     
     const motivation = document.getElementById('motivation');
     const btn = document.getElementById('btn-redeem');
